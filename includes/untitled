@@ -1,0 +1,2 @@
+Enable_A20:
+	mov		si, Greeting
