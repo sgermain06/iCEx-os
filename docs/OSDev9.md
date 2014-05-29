@@ -601,3 +601,28 @@ Bochs will provoke a triple fault and log the information:
 		
 "KBD" represents that the log was written by the keyboard controller device.
 
+# Demo #
+
+All of the A20 code is in **A20.inc**.  I wrote several different routines that uses different methods of enabling A20. So, if one method fails, try using another one.
+
+Due to the increase in complexity, I have decided to have this demo downloadable. The current **Stage2.asm** has not changed that much either.
+
+Because the demo does not display anything new, there are no new pictures to display.
+
+Download the latest demo (*.ZIP, 8KB): [Here](http://www.brokenthorn.com/Resources/Demos/Demo2.zip)
+
+# Conclusion #
+
+Wow. Just, wow. This tutorial is bigger then I originally expected.
+
+We looked at a lot of new concepts here. We also got to experience hardware programming. Remember: **this is the only way of communicating with hardware in protected mode!** Goodbye interrupts. Goodbye BIOS. Goodbye everything, we are now completely on our own.
+
+Right now, you can probably start appreciating Windows a little more :) After all, they all had to start at our level.
+
+Don't worry if you don't understand everything yet, it is complicated, I know. When we get to our kernel, we are going to have an entire tutorial dedicated to programming the keyboard microcontroller and writing a driver for it. Cool?
+
+The next tutorial will be much easier. We are going to put Protected Mode on hold for now and go back to the real mode code. We will dd the FAT12 loading code to our kernel. Now that A20 is enabled, we can load it at 1MB!
+
+Also, we will get some BIOS information and everything else that comes to mind. See you there! :)
+
+Until next time.
