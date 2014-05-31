@@ -41,6 +41,10 @@ cluster					dw 0x0000
 
 msgProgress				db ".", 0
 msgFailure  			db "X", 13, 10, "ERROR : Press Any Key to Reboot", 13, 0
+here 					db "Here!", 0
+sectorToRead			db "Sectors to read: ", 0
+prog 					db "", 0
+msgRetry				db 13, 10, "Done reading!", 0
 
 ;************************************************
 ;	CHSLBA ()
@@ -49,11 +53,11 @@ msgFailure  			db "X", 13, 10, "ERROR : Press Any Key to Reboot", 13, 0
 ;************************************************
 
 CHSLBA:
-		sub 	ax, 2								; zero base cluster number
+		sub 	ax, 0x0002                          ; zero base cluster number
 		xor		cx, cx
-		mov		cl, BYTE [bpbSectorsPerCluster]		; convert byte to word
+		mov		cl, BYTE [bpbSectorsPerCluster]     ; convert byte to word
 		mul		cx
-		add		ax, WORD [dataSector]				; base data sector
+		add		ax, WORD [dataSector]               ; base data sector
 		ret
 
 ;************************************************
@@ -79,6 +83,17 @@ LBACHS:
 		mov		BYTE [absoluteHead], dl
 		mov		BYTE [absoluteTrack], al
 		ret
+
+;************************************************
+;	ResetFloppy ()
+;		- Resets the floppy
+;************************************************
+
+ResetFloppy:
+		mov		ah, 0
+		mov 	dl, 0
+		int 	0x13
+		jc 		ResetFloppy
 
 ;************************************************
 ;	ReadSectors ()
@@ -125,6 +140,8 @@ ReadSectors:
 		add     bx, WORD [bpbBytesPerSector]		; queue next buffer
 		inc     ax									; queue next sector
 		loop    ReadSectors.Main					; read next sector
+		mov		si, msgRetry
+		call 	Puts16
 		ret
 
 %endif ;__FLOPPY_ICEXOS_INCLUDES_INC_FILE__

@@ -14,6 +14,8 @@ bits 16
 %define	FAT_SEG		0x2c0
 %define	ROOT_SEG	0x2e0
 
+mhere	db	10, 13, "F12 Here!", 10, 13, 0
+testEOF	db	10, 13, "Testing EOF", 10, 13, 0
 ;*****************************************
 ;	LoadRoot ()
 ; 		- Load Root Directry Table
@@ -68,6 +70,7 @@ LoadFAT:
 		push 	word FAT_SEG
 		pop 	es
 		xor 	bx, bx
+
 		call 	ReadSectors
 		pop 	es
 		popa									; Restore registers
@@ -171,9 +174,12 @@ LoadFile:
 		mov 	ax, word [cluster] 				; Cluster to read
 		pop 	es
 		pop 	bx
+
 		call 	CHSLBA							; Convert cluster to LBA
+
 		xor 	cx, cx
 		mov 	cl, byte [bpbSectorsPerCluster]	; Sectors to read
+
 		call 	ReadSectors						; Read cluster
 
 		pop 	ecx
@@ -210,6 +216,10 @@ LoadFile:
 	LoadFile.Done:
 		mov 	word [cluster], dx 				; Store new cluster
 		cmp 	dx, 0x0ff0 						; Test for end of file marker  (0xFF)
+		mov 	si, testEOF
+		call 	Puts16
+		cli
+		hlt
 		jb 		LoadFile.LoadImage 				; No? Go on to the next cluster then
 
 	LoadFile.Return:

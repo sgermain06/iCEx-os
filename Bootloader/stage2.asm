@@ -29,6 +29,7 @@ GateA20On	db "Enabling Gate A20...", 10, 13, 0
 GDTLoaded	db "GDT Installed...", 10, 13, 0
 LoadStage3	db "Kernel - Loading", 0
 loadKernel 	db 10, 13, "Loading kernel file", 0
+testBla		db 10, 13, "Bla!", 0
 
 ;*************************************************;
 ;	Reboot ()
@@ -84,33 +85,31 @@ main:
 		mov 	si, LoadStage3
 		call	Puts16
 
-;	mov	ebx, 0			; BX:BP points to buffer to load to
-;    	mov	bp, IMAGE_RMODE_BASE
-;	mov	si, ImageName		; our file to load
+		; Load kernel
+		call	LoadRoot 						; Load root directory table
+
+;	mov		ebx, 0			; BX:BP points to buffer to load to
+;   mov		bp, IMAGE_RMODE_BASE
+;	mov		si, ImageName		; our file to load
 ;	call	LoadFile		; load our file
-;	mov	dword [ImageSize], ecx	; save size of kernel
-;	cmp	ax, 0			; Test for success
-;	je	EnterStage3		; yep--onto Stage 3!
-;	mov	si, msgFailure		; Nope--print error
+;	mov		dword [ImageSize], ecx	; save size of kernel
+;	cmp		ax, 0			; Test for success
+;	je		EnterStage3		; yep--onto Stage 3!
+;	mov		si, msgFailure		; Nope--print error
 ;	call	Puts16
-;	mov	ah, 0
+;	mov		ah, 0
 ;	int     0x16                    ; await keypress
 ;	int     0x19                    ; warm boot computer
 ;	cli				; If we get here, something really went wong
 ;	hlt
-
-		; Load kernel
-		call	LoadRoot 						; Load root directory table
+		;call 	ResetFloppy
 
 		mov 	ebx, 0 							; BX:BP points to buffer to load to
 		mov 	bp, IMAGE_RMODE_BASE
-		mov 	si, loadKernel
-		call 	Puts16
 		mov 	si, ImageName 					; Kernel file to load
 		call	LoadFile 						; Load kernel file
 		mov 	dword [ImageSize], ecx 			; Size of kernel
 		cmp 	ax, 0 							; Check for file load error
-
 
 		je 		main.EnterStage3				; No error, load Stage 3!
 		mov 	si, msgFailure 					; Error, print error
@@ -125,8 +124,8 @@ main:
 
 	main.EnterStage3:
 
-		cli
-		hlt
+		mov 	si, testBla
+		call 	Puts16
 
 		; Switch to protected mode
 		cli										; Clear interrupts <-- IMPORTANT!!!

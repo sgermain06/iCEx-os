@@ -16,6 +16,6 @@
 ImageName     db "IXOSKRNLSYS"
 
 ; size of kernel image in bytes
-ImageSize     dd 0
+ImageSize     db 0
 
 %endif ;__COMMON_ICEXOS_INCLUDES_INC_FILE__
