@@ -162,7 +162,7 @@ LoadFile:
 		; Get starting cluster
 		push 	word ROOT_SEG
 		pop 	es
-		mov 	dx, word [es:si + 0x001A] 		; ES:DI points to file entry in root directory table.
+		mov 	dx, word [es:di + 0x001A] 		; ES:DI points to file entry in root directory table.
 		mov 	word [cluster], dx 				; Reference the table for file's first cluster
 		pop 	bx 								; Get location to write to so we don't screw up the stack
 		pop 	es
