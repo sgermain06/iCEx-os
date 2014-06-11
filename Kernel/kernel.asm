@@ -11,8 +11,8 @@ jmp		Kernel					; jump to entry point
 
 %include "includes/stdio.asm"
 
-msg 	db	0x0A, 0x0A, "                           - iCEx OS v0.1 -"
-    	db  0x0A, 0x0A, "                       32 Bit Kernel Executing", 0x0A, 0
+msg 	db	0x0A, 0x0A, "                              - iCEx OS v0.1 -"
+    	db  0x0A, 0x0A, "                          32 Bit Kernel Executing", 0x0A, 0
 
 Kernel:
 
