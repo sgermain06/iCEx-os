@@ -42,7 +42,7 @@ GetPressedKey16:
 
 bits 32
 
-%define			VIDMEM		0xB80000	; Video memory base address
+%define			VIDMEM		0xB8000		; Video memory base address
 %define			COLS		80			; Number of characters wide
 %define			LINES		25			; Number of characters high
 

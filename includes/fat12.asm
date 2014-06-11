@@ -38,7 +38,7 @@ LoadRoot:
 		mul		word [bpbSectorsPerFAT]			; Sectors used by FATs
 		add		ax, word [bpbReservedSectors]	; Adjust for boot sector
 		mov 	word [dataSector], ax 			; Base of root directory
-		mov 	word [dataSector], cx
+		add 	word [dataSector], cx
 
 		; Read root directory
 		push 	word ROOT_SEG
@@ -67,6 +67,7 @@ LoadFAT:
 		mov 	cx, ax
 
 		; Compute location of FAT and store in "ax"
+		mov 	ax, word [bpbReservedSectors]
 		push 	word FAT_SEG
 		pop 	es
 		xor 	bx, bx
@@ -218,8 +219,6 @@ LoadFile:
 		cmp 	dx, 0x0ff0 						; Test for end of file marker  (0xFF)
 		mov 	si, testEOF
 		call 	Puts16
-		cli
-		hlt
 		jb 		LoadFile.LoadImage 				; No? Go on to the next cluster then
 
 	LoadFile.Return:

@@ -55,9 +55,9 @@ msgRetry				db 13, 10, "Done reading!", 0
 CHSLBA:
 		sub 	ax, 0x0002                          ; zero base cluster number
 		xor		cx, cx
-		mov		cl, BYTE [bpbSectorsPerCluster]     ; convert byte to word
+		mov		cl, byte [bpbSectorsPerCluster]     ; convert byte to word
 		mul		cx
-		add		ax, WORD [dataSector]               ; base data sector
+		add		ax, word [dataSector]               ; base data sector
 		ret
 
 ;************************************************
@@ -75,13 +75,13 @@ CHSLBA:
 
 LBACHS:
 		xor		dx, dx								; prepare dx:ax for operation
-		div		WORD [bpbSectorsPerTrack]			; calculate
+		div		word [bpbSectorsPerTrack]			; calculate
 		inc		dl									; adjust for sector 0
-		mov		BYTE [absoluteSector], dl
+		mov		byte [absoluteSector], dl
 		xor		dx, dx								; prepare dx:ax for operation
-		div		WORD [bpbHeadsPerCylinder]			; calculate
-		mov		BYTE [absoluteHead], dl
-		mov		BYTE [absoluteTrack], al
+		div		word [bpbHeadsPerCylinder]			; calculate
+		mov		byte [absoluteHead], dl
+		mov		byte [absoluteTrack], al
 		ret
 
 ;************************************************
@@ -115,10 +115,10 @@ ReadSectors:
 		call    LBACHS 								; convert starting sector to CHS
 		mov     ah, 0x02 							; BIOS read sector
 		mov     al, 0x01 							; read one sector
-		mov     ch, BYTE [absoluteTrack]			; track
-		mov     cl, BYTE [absoluteSector]			; sector
-		mov     dh, BYTE [absoluteHead]				; head
-		mov     dl, BYTE [bsDriveNumber]			; drive
+		mov     ch, byte [absoluteTrack]			; track
+		mov     cl, byte [absoluteSector]			; sector
+		mov     dh, byte [absoluteHead]				; head
+		mov     dl, byte [bsDriveNumber]			; drive
 		int     0x13 								; invoke BIOS
 		jnc     ReadSectors.Success					; test for read error
 		xor     ax, ax 								; BIOS reset disk
@@ -137,7 +137,7 @@ ReadSectors:
 		pop     cx
 		pop     bx
 		pop     ax
-		add     bx, WORD [bpbBytesPerSector]		; queue next buffer
+		add     bx, word [bpbBytesPerSector]		; queue next buffer
 		inc     ax									; queue next sector
 		loop    ReadSectors.Main					; read next sector
 		mov		si, msgRetry

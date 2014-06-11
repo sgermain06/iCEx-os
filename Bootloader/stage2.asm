@@ -29,7 +29,8 @@ GateA20On	db "Enabling Gate A20...", 10, 13, 0
 GDTLoaded	db "GDT Installed...", 10, 13, 0
 LoadStage3	db "Kernel - Loading", 0
 loadKernel 	db 10, 13, "Loading kernel file", 0
-testBla		db 10, 13, "Bla!", 0
+EnterPmode	db 10, 13, "Entering Protected Mode", 0
+testBla		db "Bla!", 0
 
 ;*************************************************;
 ;	Reboot ()
@@ -124,7 +125,7 @@ main:
 
 	main.EnterStage3:
 
-		mov 	si, testBla
+		mov 	si, EnterPmode
 		call 	Puts16
 
 		; Switch to protected mode
@@ -153,8 +154,19 @@ LoadKernel:
 		mov		es, ax
 		mov		esp, 90000h 					; Stack begins from 0x90000
 
-
 		; Copy kernel to 1MB (0x10000)
+
+;  		 mov	eax, dword [ImageSize]
+;  		 movzx	ebx, word [bpbBytesPerSector]
+;  		 mul	ebx
+;  		 mov	ebx, 4
+;  		 div	ebx
+;   	 cld
+;   	 mov    esi, IMAGE_RMODE_BASE
+;   	 mov	edi, IMAGE_PMODE_BASE
+;   	 mov	ecx, eax
+;   	 rep	movsd                   ; copy image to its protected mode address
+
 	LoadKernel.CopyImage:
 
 		mov 	eax, dword [ImageSize]
@@ -166,6 +178,6 @@ LoadKernel:
 		mov 	esi, IMAGE_RMODE_BASE
 		mov 	edi, IMAGE_PMODE_BASE
 		mov 	ecx, eax
-		rep 	movsd 							; Copy imate to its protected mode address
+		rep 	movsd 							; Copy image to its protected mode address
 
 		call 	CODE_DESC:IMAGE_PMODE_BASE

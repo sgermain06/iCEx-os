@@ -71,10 +71,10 @@ ReadSectors:
 		call    LBACHS                              ; convert starting sector to CHS
 		mov     ah, 0x02                            ; BIOS read sector
 		mov     al, 0x01                            ; read one sector
-		mov     ch, BYTE [absoluteTrack]            ; track
-		mov     cl, BYTE [absoluteSector]           ; sector
-		mov     dh, BYTE [absoluteHead]             ; head
-		mov     dl, BYTE [bsDriveNumber]            ; drive
+		mov     ch, byte [absoluteTrack]            ; track
+		mov     cl, byte [absoluteSector]           ; sector
+		mov     dh, byte [absoluteHead]             ; head
+		mov     dl, byte [bsDriveNumber]            ; drive
 		int     0x13                                ; invoke BIOS
 		jnc     .SUCCESS                            ; test for read error
 		xor     ax, ax                              ; BIOS reset disk
@@ -174,16 +174,16 @@ LOAD_ROOT:
 		xor     cx, cx
 		xor     dx, dx
 		mov     ax, 32								; 32 byte directory entry
-		mul     WORD [bpbRootEntries]				; total size of directory
-		div     WORD [bpbBytesPerSector]			; sectors used by directory
+		mul     word [bpbRootEntries]				; total size of directory
+		div     word [bpbBytesPerSector]			; sectors used by directory
 		xchg    ax, cx
 
 	; compute location of root directory and store in "ax"
 		mov     al, BYTE [bpbNumberOfFATs]			; number of FATs
-		mul     WORD [bpbSectorsPerFAT]				; sectors used by FATs
-		add     ax, WORD [bpbReservedSectors]		; adjust for bootsector
-		mov     WORD [datasector], ax				; base of root directory
-		add     WORD [datasector], cx
+		mul     word [bpbSectorsPerFAT]				; sectors used by FATs
+		add     ax, word [bpbReservedSectors]		; adjust for bootsector
+		mov     word [datasector], ax				; base of root directory
+		add     word [datasector], cx
 
 	; read root directory into memory (:0200)
 		mov     bx, 0x0200							; copy root dir above bootcode
@@ -194,7 +194,7 @@ LOAD_ROOT:
 	;----------------------------------------------------
 
 	; browse root directory for binary image
-		mov     cx, WORD [bpbRootEntries]			; load loop counter
+		mov     cx, word [bpbRootEntries]			; load loop counter
 		mov     di, 0x0200							; locate first root entry
 	.LOOP:
 		push    cx
@@ -215,17 +215,17 @@ LOAD_ROOT:
 
 LOAD_FAT:
 	; save starting cluster of boot image
-		mov		dx, WORD [di + 0x001A]
-		mov		WORD [cluster], dx					; file's first cluster
+		mov		dx, word [di + 0x001A]
+		mov		word [cluster], dx					; file's first cluster
 
 	; compute size of FAT and store in "cx"
 		xor     ax, ax
 		mov     al, BYTE [bpbNumberOfFATs]          ; number of FATs
-		mul     WORD [bpbSectorsPerFAT]             ; sectors used by FATs
+		mul     word [bpbSectorsPerFAT]             ; sectors used by FATs
 		mov     cx, ax
 
 	; compute location of FAT and store in "ax"
-		mov     ax, WORD [bpbReservedSectors]       ; adjust for bootsector
+		mov     ax, word [bpbReservedSectors]       ; adjust for bootsector
 
 	; read FAT into memory (7C00:0200)
 		mov     bx, 0x0200                          ; copy FAT above bootcode
@@ -242,7 +242,7 @@ LOAD_FAT:
 	;----------------------------------------------------
 
 LOAD_IMAGE:
- 		mov		ax, WORD [cluster]					; cluster to read
+ 		mov		ax, word [cluster]					; cluster to read
 		pop		bx									; buffer to read into
 		call	ClusterLBA							; convert cluster to LBA
 		xor		cx, cx
@@ -251,14 +251,14 @@ LOAD_IMAGE:
 		push	bx
           
 	; compute next cluster
-		mov     ax, WORD [cluster]					; identify current cluster
+		mov     ax, word [cluster]					; identify current cluster
 		mov		cx, ax								; copy current cluster
 		mov		dx, ax								; copy current cluster
 		shr		dx, 0x0001							; divide by two
 		add		cx, dx								; sum for (3/2)
 		mov		bx, 0x0200							; location of FAT in memory
 		add		bx, cx								; index into FAT
-		mov		dx, WORD [bx]						; read two bytes from FAT
+		mov		dx, word [bx]						; read two bytes from FAT
 		test	ax, 0x0001
 		jnz		.ODD_CLUSTER
 
@@ -270,15 +270,15 @@ LOAD_IMAGE:
 		shr     dx, 0x0004							; take high twelve bits
 
 	.DONE:
-		mov     WORD [cluster], dx					; store new cluster
+		mov     word [cluster], dx					; store new cluster
 		cmp     dx, 0x0FF0							; test for end of file
 		jb      LOAD_IMAGE
           
 DONE:
 		mov		si, msgNewLine
 		call 	Print
-		push	WORD 0x0050
-		push	WORD 0x0000
+		push	word 0x0050
+		push	word 0x0000
 		retf
 
 FAILURE:

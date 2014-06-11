@@ -7,7 +7,7 @@
 %define __COMMON_ICEXOS_INCLUDES_INC_FILE__
 
 ; where the kernel is to be loaded to in protected mode
-%define IMAGE_PMODE_BASE 0x100000
+%define IMAGE_PMODE_BASE 0x10000
 
 ; where the kernel is to be loaded to in real mode
 %define IMAGE_RMODE_BASE 0x3000
