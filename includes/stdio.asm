@@ -55,7 +55,7 @@ bits 32
 _CurX			db			0 			; Cursor X position
 _CurY			db			0 			; Cursor Y position
 
-_CharAttr		db			0x7			; Default color: light gray on black background
+_CharAttr		db			0x1A		; Default color: light gray on black background
 
 ;*****************************************
 ;	Putch32 ()
@@ -196,8 +196,7 @@ ClrScr32:
 		mov 	edi, VIDMEM				; Copy video memory address into edi
 		mov 	cx, 2000				; Copy 2000 into counter
 		mov 	ah, _CharAttr			; Set character attribute into accumulator (high)
-		mov 	al, ' '					; Copy space character into accumulator (low)
-		rep 	stosw
+		mov 	al, ' '					; Copy space character into accumulator (low		rep 	stosw
 
 		mov 	byte [_CurX], 0 		; Set cursor X position to 0
 		mov 	byte [_CurY], 0 		; Set cursor Y position to 0
