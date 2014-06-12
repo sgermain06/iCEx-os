@@ -393,8 +393,8 @@ So, all we need to do is get the amount of sectors for the FATs and add that to 
 			mov		al, byte [bpbNumberOfFATs]		; Number of FATs
 			mul		word [bpbSectorsPerFAT]			; Sectors used by FATs
 			add		ax, word [bpbReservedSectors]	; Adjust for boot sector
-			mov		word, [dataSector], ax			; Base of root directory
-			mov		word, [dataSector], cx
+			mov		word [dataSector], ax			; Base of root directory
+			add		word [dataSector], cx
 			
 Now that we have the number of sectors to read and exact starting sector, let's read it!
 
