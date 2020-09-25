@@ -1,17 +1,43 @@
-VOLUMELABEL = ICEXOS
-INCLUDES = ./includes
+GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+ASPARAMS = --32
+LDPARAMS = -melf_i386
 
-install:
+objects = 	loader.o \
+			gdt.o \
+			port.o \
+			interruptstubs.o \
+			interrupts.o \
+			keyset.o \
+			keyboard.o \
+			kernel.o
 
-run:
+%.o: %.cpp
+	g++ $(GCCPARAMS) -c -o $@ $<
 
-	if [ -a /Volumes/$(VOLUMELABEL)/STAGE2.ICE ]; then rm /Volumes/$(VOLUMELABEL)/STAGE2.ICE; fi;
-	if [ -a /Volumes/$(VOLUMELABEL)/IXOSKRNL.ICE ]; then rm /Volumes/$(VOLUMELABEL)/IXOSKRNL.ICE; fi;
+%.o: %.s
+	as $(ASPARAMS) -o $@ $<
 
-	nasm -f bin Bootloader/stage2.asm -o Bootloader/STAGE2.ICE -I$(INCLUDES)
-	nasm -f bin Kernel/kernel.asm -o Kernel/IXOSKRNL.ICE -I$(INCLUDES)
 
-	cp Bootloader/STAGE2.ICE /Volumes/$(VOLUMELABEL)
-	cp Kernel/IXOSKRNL.ICE /Volumes/$(VOLUMELABEL)
+mykernel.bin: linker.ld $(objects)
+	ld $(LDPARAMS) -T $< -o $@ $(objects)
 
-	bochs -f conf/bochs.txt -q
+debug: GCCPARAMS += -DDEBUG -g
+debug: release
+
+release: mykernel.bin
+	mkdir -p iso/boot/grub
+	cp $< iso/boot/
+	echo 'set timeout=0'                   > iso/boot/grub/grub.cfg
+	echo 'set default=0'                  >> iso/boot/grub/grub.cfg
+	echo 'menuentry "iCEx OS" {'          >> iso/boot/grub/grub.cfg
+	echo '  multiboot /boot/mykernel.bin' >> iso/boot/grub/grub.cfg
+	echo '  boot'                         >> iso/boot/grub/grub.cfg
+	echo '}'                              >> iso/boot/grub/grub.cfg
+	grub-mkrescue --output=mykernel.iso iso
+	rm -rf iso
+	rm *.o
+	rm mykernel.bin
+
+.PHONY: clean
+clean:
+	rm -f $(objects) mykernel.bin mykernel.iso

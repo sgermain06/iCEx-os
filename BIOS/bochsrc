@@ -1,1 +1,0 @@
-ata0-master: type=disk, path="boot.img", mode=flat, cylinders=20, heads=16, spt=63
