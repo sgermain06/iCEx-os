@@ -22,7 +22,7 @@ This code will compile using Linux (or WSL on Windows). Make sure you have the f
 
 #### Release/Debug
 
-The operating system is equiped with debugging information. To compile it in debug mode, simply run this:
+The operating system is equipped with debugging information. To compile it in debug mode, simply run this:
 
 ```
 make debug
