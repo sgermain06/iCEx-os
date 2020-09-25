@@ -1,36 +1,46 @@
-## Welcome to GitHub Pages
+## Welcome to iCEx OS!
 
-You can use the [editor on GitHub](https://github.com/sgermain06/iCEx-os/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Simple operating system written in C++.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Current State
 
-### Markdown
+The operating system is able to boot using grub and should run just fine inside a virtual machine using VirtualBox.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+#### Important
 
-```markdown
-Syntax highlighted code block
+Booting a physical system with this os might result in not being able to type anything, as there are no USB keyboard support implemented yet.
 
-# Header 1
-## Header 2
-### Header 3
+### Compiling
 
-- Bulleted
-- List
+This code will compile using Linux (or WSL on Windows). Make sure you have the following installed:
 
-1. Numbered
-2. List
+- g++
+- binutils
+- libc6-dev-i386
+- grub-legacy
+- xorriso
 
-**Bold** and _Italic_ and `Code` text
+#### Release/Debug
 
-[Link](url) and ![Image](src)
+The operating system is equiped with debugging information. To compile it in debug mode, simply run this:
+
+```
+make debug
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+If you don't need the debug information, simply run:
 
-### Jekyll Themes
+```
+make release
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sgermain06/iCEx-os/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+This should create a file called `mykernel.iso` under the root directory. Simply use that ISO to boot your virtual machine.
+
+### VirtualBox
+
+Make sure you create your virtual machine specifying an unknown OS. We want the most basic configurations.
+
+![VirtualBox](virtualbox.png)
 
 ### Support or Contact
 
