@@ -1,6 +1,6 @@
 #include "keyset.h"
 
-void printf(char*);
+void printf(char*, ...);
 
 KeySet::KeySet(uint8_t keySetCode)
 {
@@ -105,15 +105,7 @@ void KeySet::OnKeyDown(uint8_t keyCode)
         case 0x39: printf(" "); break;
 
         default:
-            char* foo = "DOWN 0x00 (    ) ";
-            char* hex = "0123456789ABCDEF";
-            foo[7] = hex[(keyCode >> 4) & 0x0F];
-            foo[8] = hex[keyCode & 0x0F];
-            foo[11] = isShift() ? 'S' : ' ';
-            foo[12] = isAlt() ? 'A' : ' ';
-            foo[13] = isMeta() ? 'M' : ' ';
-            foo[14] = isCtrl() ? 'C' : ' ';
-            printf(foo);
+            printf("DOWN 0x%x (%c%c%c%c)", keyCode, isShift() ? 'S' : ' ', isAlt() ? 'A' : ' ', isMeta() ? 'M' : ' ', isCtrl() ? 'C' : ' ');
             break;
     }
 }

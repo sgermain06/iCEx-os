@@ -36,15 +36,6 @@ uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
     else {
         keySet.OnKeyUp(key);
     }
-    // {
-        // switch (key) {
-        //     case 0xFA:
-        //     case 0x45:
-        //     case 0xC5:
-        //         break;
-
-        //     case 0x1E: printf("a"); break;
-    // }
 
     return esp;
 }

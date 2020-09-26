@@ -1,8 +1,7 @@
 #include "interrupts.h"
 
-void printf(char* str);
-void printf(char* str, uint8_t number);
-void debug(char* str);
+void printf(char* str, ...);
+void debug(char* str, ...);
 
 InterruptHandler::InterruptHandler(uint8_t interruptNumber, InterruptManager* interruptManager)
 {
@@ -129,7 +128,7 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t e
         esp = handlers[interruptNumber]->HandleInterrupt(esp);
     }
     else if (interruptNumber != 0x20) {
-        printf(" UNHANDLED INTERRUPT 0x", interruptNumber);
+        printf(" UNHANDLED INTERRUPT 0x%x", interruptNumber);
     }
 
     if (0x20 <= interruptNumber && interruptNumber <= 0x30) {
