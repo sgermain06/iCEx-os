@@ -7,9 +7,9 @@ objects = 	loader.o \
 			port.o \
 			interruptstubs.o \
 			interrupts.o \
+			screen.o \
 			keyset.o \
 			keyboard.o \
-			screen.o \
 			kernel.o
 
 %.o: %.cpp

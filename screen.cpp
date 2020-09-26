@@ -142,7 +142,7 @@ int Screen::vprintf(const char* str, va_list args)
 
 					/*** characters ***/
                     case 'c': {
-                        char c = va_arg (args, char);
+                        char c = va_arg(args, char);
                         displayChar(c);
                         i++;
                         break;

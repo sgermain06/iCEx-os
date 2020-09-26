@@ -1,6 +1,6 @@
 #include "keyset.h"
 
-void printf(char*, ...);
+void printf(char* str, ...);
 
 KeySet::KeySet(uint8_t keySetCode)
 {
@@ -105,7 +105,7 @@ void KeySet::OnKeyDown(uint8_t keyCode)
         case 0x39: printf(" "); break;
 
         default:
-            printf("DOWN 0x%x (%c%c%c%c)", keyCode, isShift() ? 'S' : ' ', isAlt() ? 'A' : ' ', isMeta() ? 'M' : ' ', isCtrl() ? 'C' : ' ');
+            printf("DOWN 0x%x (%c%c%c%c)", keyCode, (isShift() ? 'S' : ' '), (isAlt() ? 'A' : ' '), (isMeta() ? 'M' : ' '), (isCtrl() ? 'C' : ' '));
             break;
     }
 }

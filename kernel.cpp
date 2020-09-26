@@ -18,7 +18,7 @@ void printf(char* str, ...)
 {
     va_list args;
     va_start(args, str);
-    screen.printf(str, args);
+    screen.vprintf(str, args);
     va_end(args);
 }
 
@@ -26,7 +26,7 @@ void debug(char* str, ...) {
     #ifdef DEBUG
     va_list args;
     va_start(args, str);
-    screen.printf(str, args);
+    screen.vprintf(str, args);
     va_end(args);
     #endif
 }
