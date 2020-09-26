@@ -122,8 +122,9 @@ int Screen::printf(const char* str, ...)
 {
     va_list args;
     va_start(args, str);
-    vprintf(str, args);
+    int ret = vprintf(str, args);
     va_end(args);
+    return ret;
 }
 
 int Screen::vprintf(const char* str, va_list args)
