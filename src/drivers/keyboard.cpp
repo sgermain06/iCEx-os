@@ -1,4 +1,4 @@
-#include "keyboard.h"
+#include <drivers/keyboard.h>
 
 void printf(char* str);
 

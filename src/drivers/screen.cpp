@@ -1,4 +1,4 @@
-#include "screen.h"
+#include <drivers/screen.h>
 
 char tbuf[32];
 char bchars[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
@@ -37,6 +37,7 @@ void itoa_s(uint32_t i, uint32_t base, char* buf) {
 
 Screen::Screen()
 {
+    this->mouseInitialized = false;
     this->videoMemory = (uint16_t*)0xb8000;
     clear();
     render();
@@ -49,7 +50,7 @@ Screen::~Screen()
 
 void Screen::render()
 {
-    for (uint8_t row = 0; row < 25; row++) {
+    for (uint8_t row = 1; row < 24; row++) {
         for (uint8_t col = 0; col < 80; col++) {
             this->videoMemory[row * 80 + col] = (this->videoMemory[row * 80 + col] & 0xFF00) | this->charMap[row][col];
         }
@@ -58,13 +59,27 @@ void Screen::render()
 
 void Screen::clear()
 {
-    for (uint8_t row = 0; row < 25; row++) {
+    for (uint8_t row = 1; row < 24; row++) {
         for (uint8_t col = 0; col < 80; col++) {
             this->charMap[row][col] = ' ';
         }
     }
     this->x = 0;
-    this->y = 0;
+    this->y = 1;
+}
+
+void Screen::displayHeader(char* str)
+{
+    for (uint8_t i = 0; str[i] != '\0'; ++i) {
+        this->videoMemory[i] = (this->videoMemory[i] & 0xFF00) | str[i];
+    }
+}
+
+void Screen::displayFooter(char* str, ...)
+{
+    for (uint8_t i = 0; str[i] != '\0'; ++i) {
+        this->videoMemory[(24 * 80) + i] = (this->videoMemory[(24 * 80) + i] & 0xFF00) | str[i];
+    }
 }
 
 void Screen::displayChar(char chr)
@@ -91,18 +106,18 @@ void Screen::displayChar(char chr)
         this->y++;
     }
 
-    if (this->y >= 25) {
+    if (this->y >= 24) {
         // Loop through all rows - 1
-        for (uint8_t row = 0; row < 24; row++) {
+        for (uint8_t row = 1; row < 24; row++) {
             for (uint8_t col = 0; col < 80; col++) {
                 this->charMap[row][col] = this->charMap[row+1][col];
             }
         }
 
         for (uint8_t col = 0; col < 80; col++) {
-            this->charMap[24][col] = ' ';
+            this->charMap[23][col] = ' ';
         }
-        this->y = 24;
+        this->y = 23;
         render();
     }
 }
@@ -200,4 +215,65 @@ int Screen::vprintf(const char* str, va_list args)
     }
 
     return 1;
+}
+
+void Screen::renderMouse(int8_t x, int8_t y)
+{
+    this->videoMemory[80 * y + x] = ((this->videoMemory[80 * y + x] & 0xF000) >> 4) 
+                                            | ((this->videoMemory[80 * y + x] & 0x0F00) << 4)
+                                            | ((this->videoMemory[80 * y + x] & 0x00FF));
+    this->mouseInitialized = true;
+}
+
+void Screen::moveMouse(int8_t x, int8_t y)
+{
+    if (this->mouseInitialized) {
+        renderMouse(this->mouseX, this->mouseY);
+    }
+
+    this->mouseX += x;
+    if (this->mouseX > 79) this->mouseX = 79;
+    if (this->mouseX < 0) this->mouseX = 0;
+
+    this->mouseY -= y;
+    if (this->mouseY > 24) this->mouseY = 24;
+    if (this->mouseY < 0) this->mouseY = 0;
+
+    renderMouse(this->mouseX, this->mouseY);
+    // printf("Movement x: %i, y: %i, Position x: %i, y: %i\n", x, y, this->mouseX, this->mouseY);
+    printMouseCoordinates();
+}
+
+uint8_t strlen(char* str) {
+    uint8_t returnVal = 0;
+    for (int i = 0; str[i] != '\0'; ++i) {
+        returnVal++;
+    }
+    return returnVal;
+}
+
+void Screen::printMouseCoordinates()
+{
+    char *status = "X: 00, Y: 00 (   )";
+    char *xPos, *yPos;
+    // itoa(this->mouseX, 10, xPos);
+    // itoa(this->mouseY, 10, yPos);
+    // if (strlen(xPos) == 1) {
+    //     status[3] = ' ';
+    //     status[4] = xPos[0];
+    // }
+    // else {
+    //     status[3] = xPos[0];
+    //     status[4] = xPos[1];
+    // }
+
+    // if (strlen(yPos) == 1) {
+    //     status[10] = ' ';
+    //     status[11] = xPos[0];
+    // }
+    // else {
+    //     status[10] = xPos[0];
+    //     status[11] = xPos[1];
+    // }
+    displayFooter(status);
 }

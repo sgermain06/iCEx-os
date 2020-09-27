@@ -1,4 +1,4 @@
-#include "interrupts.h"
+#include <hardware/interrupts.h>
 
 void printf(char* str, ...);
 void debug(char* str, ...);
@@ -65,6 +65,7 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt) :
     debug("  - Enabling 0x20 and 0x21 interrupt handlers\n");
     SetInterruptDescriptorTableEntry(0x20, CodeSegment, &HandleInterruptRequest0x00, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(0x21, CodeSegment, &HandleInterruptRequest0x01, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x2C, CodeSegment, &HandleInterruptRequest0x0C, 0, IDT_INTERRUPT_GATE);
 
     debug("  - Initializing programmable interrupt controllers (master/slave)...\n");
     picMasterCommand.Write(0x11);

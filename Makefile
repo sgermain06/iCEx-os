@@ -1,21 +1,24 @@
-GCCPARAMS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
+GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 
-objects = 	loader.o \
-			gdt.o \
-			port.o \
-			interruptstubs.o \
-			interrupts.o \
-			screen.o \
-			keyset.o \
-			keyboard.o \
-			kernel.o
+objects = 	obj/loader.o \
+			obj/hardware/port.o \
+			obj/gdt.o \
+			obj/hardware/interruptstubs.o \
+			obj/hardware/interrupts.o \
+			obj/drivers/screen.o \
+			obj/drivers/keyset.o \
+			obj/drivers/keyboard.o \
+			obj/drivers/mouse.o \
+			obj/kernel.o 
 
-%.o: %.cpp
+obj/%.o: src/%.cpp
+	@mkdir -p $(@D)
 	g++ $(GCCPARAMS) -c -o $@ $<
 
-%.o: %.s
+obj/%.o: src/%.s
+	@mkdir -p $(@D)
 	as $(ASPARAMS) -o $@ $<
 
 
@@ -36,7 +39,7 @@ release: mykernel.bin
 	echo '}'                              >> iso/boot/grub/grub.cfg
 	grub-mkrescue --output=mykernel.iso iso
 	rm -rf iso
-	rm *.o
+	rm -rf obj
 	rm mykernel.bin
 
 .PHONY: clean

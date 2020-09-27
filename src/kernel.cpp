@@ -1,16 +1,9 @@
-#include "types.h"
-#include "gdt.h"
-#include "interrupts.h"
-#include "keyboard.h"
-#include "screen.h"
+#include <common/types.h>
+#include <gdt.h>
+#include <hardware/interrupts.h>
 
-uint8_t strlen(char* str) {
-    uint8_t returnVal = 0;
-    for (int i = 0; str[i] != '\0'; ++i) {
-        returnVal++;
-    }
-    return returnVal;
-}
+// Consolidating drivers includes
+#include <drivers/drivers.h>
 
 Screen screen;
 
@@ -43,7 +36,7 @@ extern "C" void callConstructors()
 
 extern "C" void kernelMain(const void* multiboot_structure, uint32_t magicnumber)
 {
-    printf("Hello, world! Welcome to iCEx OS!\n");
+    screen.displayHeader("                        Hello, world! Welcome to iCEx OS");
     debug("Testing arguments: Decimal: %d, Hex: 0x%x\n", 32, 32);
     debug("- Creating Global Descriptor Table\n");
     GlobalDescriptorTable gdt;
@@ -51,7 +44,7 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t magicnumber
     InterruptManager interrupts(&gdt);
 
     KeyboardDriver keyboardDriver(&interrupts, 1);
-
+    MouseDriver mouseDriver(&interrupts, &screen);
 
     debug("- Activating interrupts\n");
     interrupts.Activate();

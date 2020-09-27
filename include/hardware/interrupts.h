@@ -1,9 +1,9 @@
 #ifndef __IDT_H
 #define __IDT_H
 
-#include "gdt.h"
-#include "types.h"
-#include "port.h"
+#include <gdt.h>
+#include <common/types.h>
+#include <hardware/port.h>
 
 class InterruptManager;
 
@@ -53,6 +53,7 @@ protected:
     static void InterruptIgnore();
     static void HandleInterruptRequest0x00();
     static void HandleInterruptRequest0x01();
+    static void HandleInterruptRequest0x0C();
 
     static uint32_t HandleInterrupt(uint8_t interruptNumber, uint32_t esp);
     uint32_t DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp);
