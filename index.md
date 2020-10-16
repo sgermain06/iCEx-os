@@ -17,7 +17,8 @@ This code will compile using Linux (or WSL on Windows). Make sure you have the f
 - g++
 - binutils
 - libc6-dev-i386
-- grub-legacy
+- grub-pc
+- grub-common
 - xorriso
 
 #### Release/Debug
